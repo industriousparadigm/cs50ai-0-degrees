@@ -102,7 +102,6 @@ def shortest_path(source, target):
     while True:
         # no solution if frontier is empty
         if frontier.empty():
-            print("frontier empty")
             return None
 
         # remove a person from the frontier
