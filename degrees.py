@@ -92,8 +92,64 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO
-    raise NotImplementedError
+    # BFS approach (breadth first search)
+    frontier = QueueFrontier()
+
+    initial_node = Node(state=source, parent=None, action=None)
+    frontier.add(initial_node)
+    explored = set()
+
+    while True:
+        # no solution if frontier is empty
+        if frontier.empty():
+            print("frontier empty")
+            return None
+
+        # remove a person from the frontier
+        current_node = frontier.remove()
+
+        # if person removed is the goal, return solution!
+        if current_node.state == target:
+            return build_solution(current_node)
+
+        # since they are not, add them to explored set
+        explored.add(current_node.state)
+
+        # expand the node by adding its neighbors to the frontier, if not yet explored
+        neighbors = neighbors_for_person(current_node.state)
+
+        for movie_id, person_id in neighbors:
+            # skip if already explored
+            if person_id in explored:
+                continue
+
+            new_node = Node(
+                state=person_id,
+                parent=current_node,
+                action=(movie_id, person_id)
+            )
+
+            # if Node is the goal, return solution!
+            if new_node.state == target:
+                return build_solution(new_node)
+
+            frontier.add(new_node)
+
+
+def build_solution(node):
+    """
+    Takes a node and returns a list of (movie_id, person_id) pairs
+    representing the path that led to that node.
+    """
+    solution = []
+    current_node = node
+
+    while current_node.parent != None:
+        solution.append(current_node.action)
+        current_node = current_node.parent
+
+    solution.reverse()
+    return solution
 
 
 def person_id_for_name(name):
